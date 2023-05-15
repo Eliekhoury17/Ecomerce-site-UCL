@@ -10,8 +10,6 @@ class  User extends Model{}
 class Products extends Model{}
 class Historic_achat extends Model{}
 
-
-
 User.init({
     id:{
         type:DataTypes.INTEGER,
@@ -48,17 +46,20 @@ Products.init({
     name:{
         type:DataTypes.STRING,
         allowNull:false
-
+    },
+    categorie:{
+        type:DataTypes.STRING,
+        allowNull:false
     },
     idUser:{
-        type:DataTypes.INTEGER
+        type:DataTypes.INTEGER,
+        allowNull:false
     },
     price:{
         type:DataTypes.FLOAT,
         allowNull:false,
         defaultValue:0.0
     },
-
     description:{
         type:DataTypes.TEXT,
         allowNull:false
@@ -74,36 +75,80 @@ Historic_achat.init({
         autoIncrement:true,
         primaryKey:true
     },
-    produit:{
+    name:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
+    categorie:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
+    idVendeur:{
+        type:DataTypes.INTEGER,
+        allowNull:false
+    },
+    idAcheteur:{
+        type:DataTypes.INTEGER,
+        allowNull:false
+    },
+    price:{
+        type:DataTypes.FLOAT,
+        allowNull:false,
+        defaultValue:0.0
+    },
+    description:{
+        type:DataTypes.TEXT,
+        allowNull:false
+    },
+    image:{
         type:DataTypes.TEXT,
         allowNull:false
     }
-
 },{sequelize,modelName:"Historic_achat"})
-sequelize.sync()
 
-async function getMoney(username) {
-    return User.findOne({where: {username: username}, attributes: ["money"]}).then(mon => {
+async function getMoney(id) {
+    return User.findOne({where: {id: id}, attributes: ["money"]}).then(mon => {
         if (mon) {
             return mon.dataValues.money
         } else {
             return false
         }
     }).catch(err => {
-        console.log("Unable to rretrive money of " + username + ": " + err)
+        console.log("Unable to rretrive money of " + id + ": " + err)
         return false
     })
 }
-async function getProduct(id) {
-    return Products.findOne({where: {idUser: id}})
-        .then(prod => {
-            if (prod) {
-                return prod;
-            } else {
-                return false;
-            }
-        });
+
+async function getCategorie(id) {
+    return Products.findOne({where: {id: id}, attributes: ["categorie"]}).then(mon => {
+        if (mon) {
+            return mon.dataValues.categorie
+        } else {
+            return false
+        }
+    })
 }
+
+
+async function getDescription(id) {
+    return Products.findOne({where: {id: id}, attributes: ["description"]}).then(mon => {
+        if (mon) {
+            return mon.dataValues.description
+        } else {
+            return false
+        }
+    })
+}
+async function getImage(id) {
+    return Products.findOne({where: {id: id}, attributes: ["image"]}).then(mon => {
+        if (mon) {
+            return mon.dataValues.image
+        } else {
+            return false
+        }
+    })
+}
+
 async function getID(username) {
     return User.findOne({where: {username: username}, attributes: ["id"]}).then(mon => {
         if (mon) {
@@ -116,42 +161,32 @@ async function getID(username) {
         return false
     })
 }
-async function updateMoney(username, montant) {
-    money = await getMoney(username);
+async function updateMoney(id, montant) {
+    money = await getMoney(id);
     new_money = money + montant;
-    return User.update({money: new_money}, {where: {username: username}}).then(state => {
+    return User.update({money: new_money}, {where: {id: id}}).then(state => {
         return state === 1; // nbr changement
     }).catch(err => {
-        console.log("Couldn't update money of " + username + ": " + err)
+        console.log("Couldn't update money" + err)
         return false
     })
-}
-async function updateMoney2(username, montant) {
-    money = await getMoney(username);
-    new_money = money - montant;
-    return User.update({money: new_money}, {where: {username: username}}).then(state => {
-        return state === 1; // nbr changement
-    }).catch(err => {
-        console.log("Couldn't update money of " + username + ": " + err)
-        return false
-    })
-}
+}//ajoute ou retire argent
 async function updateProfils(username, newusername, newpassword, newadresse){
     return User.findOne({where:{username:username}}).then(modif => {
         if(modif) {
             if (newpassword !== ""){
-                console.log("MAJ password")
                 const salt = bcrypt.genSaltSync(10)
                 const cryp_mdp = bcrypt.hashSync(newpassword, salt) // ache le mdp pour l'enregistrer
                 User.update({password:cryp_mdp}, {where: {username:username}})
+                console.log("MAJ password")
             }
             if (newadresse !== ""){
-                console.log("MAJ adresse")
                 User.update({adresse:newadresse}, {where: {username:username}})
+                console.log("MAJ adresse")
             }
             if (newusername !== ""){
-                console.log("MAJ username")
                 User.update({username:newusername}, {where: {username:username}})
+                console.log("MAJ username")
             }
             return true;
         }
@@ -169,6 +204,35 @@ async function checkKey(iD,key) {
         });
 }
 module.exports= {
+
+    ToHistoric: function ToHistoric(name, categorie, idVendeur, idAcheteur, price, description, image){
+        Historic_achat.create({
+            name: name,
+            categorie: categorie,
+            idVendeur:idVendeur,
+            idAcheteur:idAcheteur,
+            price: price,
+            description: description,
+            image: image
+        }).then(products => {
+            console.log("Products added " + products);
+            return true;
+        })
+
+    },
+
+
+
+    getProduct2: async function getProduct2(id) {
+        return Products.findOne({where: {idUser: id}})
+            .then(prod => {
+                if (prod) {
+                    return prod;
+                } else {
+                    return false;
+                }
+            });
+    },
     getUser: function getUser(username) {
         return User.findOne({where: {username: username}})
             .then(user => {
@@ -178,6 +242,20 @@ module.exports= {
                     return false;
                 }
             });
+    },
+    getProduct: async function getProduct(name = undefined,categorie = undefined){
+        if (categorie === undefined || categorie === "") {
+            if (name === undefined || name === ""){
+                return await Products.findAll().then(function(result){ return result })
+            }
+            else return await Products.findAll({where:{name: {[Op.like]:"%"+name+"%"}}})
+        }
+        else {
+            if (name === undefined || name === ""){
+                return await Products.findAll({where:{categorie:categorie}}).then(function(result){ return result })
+            }
+            else return await Products.findAll({where:{categorie:categorie,name: {[Op.like]:"%"+name+"%"}}})
+        }
     },
     addUser: function addUser(username, password, adresse, money) {
         return User.create({
@@ -196,14 +274,17 @@ module.exports= {
     },
     getMoney,
     updateMoney,
-    updateMoney2,
     updateProfils,
     getID,
     checkKey,
-    getProduct,
-    add_object: function add_object(name, idUser, price, description, image) {
+    getCategorie,
+    getDescription,
+    getImage,
+
+    add_object: function add_object(name,categorie,idUser, price, description, image) {
         Products.create({
             name: name,
+            categorie: categorie,
             idUser:idUser,
             price: price,
             description: description,
@@ -216,7 +297,6 @@ module.exports= {
     },
     getdisplay_order: async function getdisplay_order(id = undefined) {
         return await Products.findAll().then(function (result) {
-            //console.log(result);
             return result
         })
 
@@ -229,8 +309,11 @@ module.exports= {
             }else{
                 return false
             }
+
+
         })
     },
+
     updateorder : async function updateorder(id,new_name,new_description,new_price,new_image){
         return   Products.findOne({where:{id:id}}).then(found=>{
             if(found){
@@ -243,24 +326,21 @@ module.exports= {
                     Products.update({description:new_description},{where:{id:id}}).then(description=>{
                         console.log("**")
                         console.log(description)
-                    }).catch(err=>console.log("error" + err))
-                    console.log("description_modified")
+                    })
                 }
                 if(new_price!==""){
                     console.log(new_price)
                     Products.update({price:new_price},{where:{id:id}}).then(price=>{
                         console.log("***")
                         console.log(price)
-                    }).catch(err=>console.log("error" + err))
-                    console.log("price_modified")
+                    })
                 }
                 if(new_image!==""){
                     console.log(new_image)
                     Products.update({image:new_image},{where:{id:id}}).then(image=>{
                         console.log("****")
                         console.log(image)
-                    }).catch(err=>console.log("error"+err))
-                    console.log("image_modified")
+                    })
                 }
                 return true
             }
@@ -275,7 +355,7 @@ module.exports= {
         })
         // supprime le produit
     },
-
+    
     deleteuser:  async function deleteuser(id){
         return await User.findOne({where:{id:id}}).then(id=>
             id.destroy()
@@ -284,5 +364,24 @@ module.exports= {
             return false
         })
         // supprime le produit
+    },
+
+    deleteHistoric:  async function deleteHistoric(id){
+        return await Historic_achat.findOne({where:{idAcheteur:id}}).then(id=>
+            id.destroy()
+        ).catch(err=>{
+            console.log("error: "+ err)
+            return false
+        })
+        // supprime le produit
+    },
+
+
+
+    getHistoric: async function getHistoric(idAcheteur){
+        return await Historic_achat.findAll({where:{[Op.or]: [{idAcheteur:idAcheteur},{idVendeur:idAcheteur}]}})
     }
 }
+
+
+

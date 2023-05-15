@@ -4,89 +4,28 @@
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <%console.log(color)%>
+    <%console.log("wazaaaaaaaaaaaaaaaaaaaaaaa")%>
+    <link rel="stylesheet" type="text/css" href="../<%=color%>">
     <title>Home</title>
 </head>
 <body>
     <%-include("banner.ejs", {}) %>
-    <div class="item-wrapper">
-            <div class="widget" >
-                <b><p class="title">Ordinateurs et accessoires</p></b>
-                <p></p>
-                <img src="Ordinateurs_et_accessoires/clavier1.png" style="width:150px;height:150px;">
-                <img src="Ordinateurs_et_accessoires/sourie1.png" style="width:150px;height:150px;">
-                <img src="Ordinateurs_et_accessoires/chaise1.png" style="width:150px;height:150px;">
-                <img src="Ordinateurs_et_accessoires/casque1.png" style="width:150px;height:150px;">
-                <a href="/Ordinateurs_et_accesoires">Voir plus</a>
-            </div>
-            <div class="widget" >
-                <b><p class="title">Jeux video</p></b>
-                <p></p>
-                <img src="jeux_video/xbox1.png" style="width:150px;height:150px;">
-                <img src="jeux_video/manette1.png" style="width:150px;height:150px;">
-                <img src="jeux_video/cd1.png" style="width:150px;height:150px;">
-                <img src="jeux_video/nintendo-switch.png" style="width:150px;height:150px;">
-                <a href="Jeux_video.ejs">Voir plus</a>
-            </div>
-            <div class="widget" >
-                <b><p class="title">Jeux éducatif</p></b>
-                <p></p>
-                <img src="jeux_educatifs/jeux-educatif1.png" style="width:150px;height:150px;">
-                <img src="jeux_educatifs/jeux-educatif2.png" style="width:150px;height:150px;">
-                <img src="jeux_educatifs/jeux-educatif3.png" style="width:150px;height:150px;">
-                <img src="jeux_educatifs/jeux-educatif4.png" style="width:150px;height:150px;">
-                <a href="Jeux_educatifs.ejs">Voir plus</a>
-            </div>
-            <div class="widget" >
-                <b><p class="title">Livres</p></b>
-                <p></p>
-                <img src="Livres/book1.png" style="width:150px;height:150px;">
-                <img src="Livres/book2.png" style="width:150px;height:150px;">
-                <img src="public/Livres/book3.png" style="width:150px;height:150px;">
-                <img src="Livres/book4.png" style="width:150px;height:150px;">
-                <a href="Livres.ejs">Voir plus</a>
-            </div>
-            <div class="widget" >
-                <b><p class="title">Gadgets électronique</p></b>
-                <p></p>
-                <img src="Gadgets_electroniques/chargeur1.png" style="width:150px;height:150px;">
-                <img src="Gadgets_electroniques/phone1.png" style="width:150px;height:150px;">
-                <img src="Gadgets_electroniques/lampe-torche1.png" style="width:150px;height:150px;">
-                <img src="Gadgets_electroniques/camera1.png" style="width:150px;height:150px;">
-                <a href="Gadget_electronique.ejs">Voir plus</a>
-            </div>
-            <div class="widget" >
-                <b><p class="title">Produits vendu par les client</p></b>
-                <p></p>
-                <img src="" style="width:150px;height:150px;">
-                <img src="" style="width:150px;height:150px;">
-                <img src="" style="width:150px;height:150px;">
-                <img src="" style="width:150px;height:150px;">
-                <a href="Client_products.ejs">Voir plus</a>
-            </div>
-
-    </div>
-
-    <div class="slideshow-container">
-        <div class="mySlides fade">
-            <img src="Vetements/Vetement.png" height="1000" width="1520">
-        </div>
-        <div class="mySlides fade">
-            <img src="Gadgets_electroniques/Electronique.png" height="1000" width="1520">
-        </div>
-        <div class="mySlides fade">
-            <img src="jeux_video/Jeux.png" height="1000" width="1520">
-        </div>
-        <a class="prev" onclick="plusSlides(-1)">❮</a>
-        <a class="next" onclick="plusSlides(1)">❯</a>
-    </div>
     <br>
+    <div class="content-menu">
+        <div class="content-ordi-accesoire">
+            <%-include("product.ejs", {}) %>
+        </div>
+    </div>
+
     <div class="buttom-container">
         <div class="top-button">
             <a href="#top">Retour en haut</a>
         </div>
     </div>
+
 </body>
+
 <script>
     let slideIndex = 1;
     showSlides(slideIndex);

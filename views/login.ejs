@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="../<%=color%>">
     <title>Login</title>
 </head>
 <body>
-    <video autoplay muted loop id="myVideo">
-        <source src="video.mp4" type="video/mp4">
-    </video>
+
     <%-include("banner.ejs", {}) %>
     <div class="content-login">
         <div class="login-container">
@@ -27,7 +25,7 @@
                 <b><p>Pseudo :</p></b>
                 <input type="text" id="username" name="username" placeholder="Pseudo" required><br>
                 <b><p>Mot de passe :</p></b>
-                <input type="text" id="password" name="password" placeholder="Mot de passe" required>
+                <input type="password" id="password" name="password" placeholder="Mot de passe" required>
                 <br>
                 <br>
                 <a href="/portefeuille">
@@ -39,7 +37,7 @@
             </div>
             <div class="register-button">
                 <a href="/register">
-                    <input type="submit" value="Créer votre compte" >
+                    <input type="submit" value="Créer compte" width="400px" height="10px">
                 </a>
             </div>
         </div>
